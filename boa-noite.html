@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Boa Noite</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Inter:wght@300;400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --deep-navy: #050d1a;
+      --midnight: #0a1628;
+      --indigo: #1a2a4a;
+      --violet: #6b3fa0;
+      --lavender: #b388ff;
+      --gold: #f5c842;
+      --silver: #c8d6f0;
+      --white: #eef2ff;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      background: radial-gradient(ellipse at 50% 0%, #1a2a5e 0%, #0a1628 40%, #050d1a 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Inter', sans-serif;
+      color: var(--white);
+      min-height: 100vh;
+      position: relative;
+    }
+
+    /* ── Stars canvas ── */
+    #stars-canvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Shooting stars ── */
+    .shooting-star {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 2px;
+      height: 2px;
+      background: white;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0;
+    }
+    .shooting-star::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      right: 0;
+      transform: translateY(-50%);
+      width: 120px;
+      height: 1px;
+      background: linear-gradient(to left, transparent, rgba(255,255,255,0.8));
+    }
+
+    /* ── Moon ── */
+    .moon-container {
+      position: fixed;
+      top: 6%;
+      right: 12%;
+      z-index: 2;
+      animation: moonFloat 8s ease-in-out infinite;
+    }
+
+    .moon {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #fff9c4, #f5c842 40%, #e0a800 100%);
+      box-shadow:
+        0 0 40px 15px rgba(245, 200, 66, 0.35),
+        0 0 80px 30px rgba(245, 200, 66, 0.15),
+        0 0 160px 60px rgba(245, 200, 66, 0.07);
+      position: relative;
+    }
+
+    .moon::before {
+      content: '';
+      position: absolute;
+      top: 12px;
+      left: 20px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.08);
+      box-shadow: 28px 18px 0 8px rgba(0,0,0,0.06), 10px 40px 0 5px rgba(0,0,0,0.05);
+    }
+
+    .moon-glow {
+      position: absolute;
+      inset: -30px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(245,200,66,0.12) 0%, transparent 70%);
+      animation: pulse 4s ease-in-out infinite;
+    }
+
+    @keyframes moonFloat {
+      0%, 100% { transform: translateY(0px) rotate(-2deg); }
+      50%       { transform: translateY(-12px) rotate(2deg); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1);   opacity: 0.6; }
+      50%       { transform: scale(1.2); opacity: 1;   }
+    }
+
+    /* ── Clouds ── */
+    .cloud {
+      position: fixed;
+      border-radius: 50px;
+      background: rgba(255, 255, 255, 0.04);
+      backdrop-filter: blur(2px);
+      pointer-events: none;
+      z-index: 1;
+    }
+    .cloud-1 { width: 200px; height: 40px; top: 15%; left: -220px; animation: drift 40s linear infinite; }
+    .cloud-2 { width: 140px; height: 28px; top: 25%; left: -160px; animation: drift 55s linear infinite 10s; }
+    .cloud-3 { width: 180px; height: 35px; top: 8%;  left: -200px; animation: drift 48s linear infinite 22s; }
+
+    @keyframes drift {
+      from { transform: translateX(0);        }
+      to   { transform: translateX(110vw);    }
+    }
+
+    /* ── Main card ── */
+    .card {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      padding: 64px 80px;
+      border-radius: 28px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.04),
+        0 24px 80px rgba(0, 0, 15, 0.6),
+        inset 0 1px 0 rgba(255,255,255,0.12);
+      animation: fadeInUp 1.2s cubic-bezier(0.22, 1, 0.36, 1) both;
+      max-width: 560px;
+      width: 90vw;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to   { opacity: 1; transform: translateY(0);    }
+    }
+
+    /* Moon emoji / icon above heading */
+    .icon-row {
+      font-size: 3.2rem;
+      margin-bottom: 20px;
+      animation: iconBounce 3s ease-in-out infinite;
+      display: block;
+    }
+
+    @keyframes iconBounce {
+      0%, 100% { transform: translateY(0);    }
+      50%       { transform: translateY(-8px); }
+    }
+
+    /* ── Greeting ── */
+    h1.greeting {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(3rem, 8vw, 5.5rem);
+      letter-spacing: 0.04em;
+      line-height: 1;
+      background: linear-gradient(135deg, #eef2ff 0%, #b388ff 50%, #f5c842 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+      animation: shimmer 6s linear infinite;
+      background-size: 200% 200%;
+    }
+
+    @keyframes shimmer {
+      0%   { background-position: 0% 50%;   }
+      50%  { background-position: 100% 50%; }
+      100% { background-position: 0% 50%;   }
+    }
+
+    /* ── Divider ── */
+    .divider {
+      width: 60px;
+      height: 1px;
+      background: linear-gradient(to right, transparent, rgba(179,136,255,0.6), transparent);
+      margin: 24px auto;
+    }
+
+    /* ── Date ── */
+    .date-label {
+      font-size: 0.72rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(200,214,240,0.5);
+      margin-bottom: 6px;
+    }
+
+    .date-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 400;
+      font-size: clamp(1.1rem, 3vw, 1.5rem);
+      color: var(--silver);
+      letter-spacing: 0.06em;
+    }
+
+    /* ── Quote ── */
+    .quote {
+      margin-top: 28px;
+      font-size: 0.85rem;
+      color: rgba(200, 214, 240, 0.45);
+      font-style: italic;
+      font-weight: 300;
+      letter-spacing: 0.02em;
+      line-height: 1.6;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding-top: 24px;
+    }
+
+    /* ── Subtle corner stars ── */
+    .corner-star {
+      position: fixed;
+      pointer-events: none;
+      z-index: 2;
+      font-size: 1.4rem;
+      opacity: 0.25;
+    }
+    .cs-tl { top: 18px;  left: 24px;  animation: twinkle 3.2s ease-in-out infinite; }
+    .cs-tr { top: 18px;  right: 24px; animation: twinkle 2.8s ease-in-out infinite 0.5s; }
+    .cs-bl { bottom: 18px; left: 24px;  animation: twinkle 3.5s ease-in-out infinite 1s; }
+    .cs-br { bottom: 18px; right: 24px; animation: twinkle 2.6s ease-in-out infinite 1.5s; }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.15; transform: scale(0.9); }
+      50%       { opacity: 0.4;  transform: scale(1.1); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background stars -->
+  <canvas id="stars-canvas"></canvas>
+
+  <!-- Animated clouds -->
+  <div class="cloud cloud-1"></div>
+  <div class="cloud cloud-2"></div>
+  <div class="cloud cloud-3"></div>
+
+  <!-- Moon -->
+  <div class="moon-container">
+    <div class="moon-glow"></div>
+    <div class="moon"></div>
+  </div>
+
+  <!-- Corner decoration -->
+  <span class="corner-star cs-tl">✦</span>
+  <span class="corner-star cs-tr">✦</span>
+  <span class="corner-star cs-bl">✦</span>
+  <span class="corner-star cs-br">✦</span>
+
+  <!-- Main content -->
+  <div class="card">
+    <span class="icon-row">🌙</span>
+    <h1 class="greeting">Boa Noite</h1>
+    <div class="divider"></div>
+    <p class="date-label">Hoje é</p>
+    <p class="date-text" id="date-display"></p>
+    <p class="quote" id="quote-display"></p>
+  </div>
+
+  <script>
+    // ── Date ──────────────────────────────────────────────────────────────────
+    const now = new Date();
+    const dateOpts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    const dateStr = now.toLocaleDateString('pt-BR', dateOpts);
+    // Capitalise first letter
+    document.getElementById('date-display').textContent =
+      dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
+
+    // ── Night quote ───────────────────────────────────────────────────────────
+    const quotes = [
+      "Que seus sonhos sejam tão lindos quanto as estrelas.",
+      "A noite é o convite perfeito para descansar e sonhar.",
+      "Descanse bem. Amanhã é uma nova oportunidade.",
+      "Que a lua ilumine o seu caminho até o amanhecer.",
+      "O silêncio da noite guarda os segredos mais belos."
+    ];
+    const q = quotes[Math.floor(Math.random() * quotes.length)];
+    document.getElementById('quote-display').textContent = `"${q}"`;
+
+    // ── Star canvas ───────────────────────────────────────────────────────────
+    const canvas = document.getElementById('stars-canvas');
+    const ctx    = canvas.getContext('2d');
+    let stars    = [];
+
+    function resize() {
+      canvas.width  = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', () => { resize(); initStars(); });
+
+    function initStars() {
+      stars = [];
+      const count = Math.floor((canvas.width * canvas.height) / 3500);
+      for (let i = 0; i < count; i++) {
+        stars.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          r: Math.random() * 1.4 + 0.3,
+          alpha: Math.random(),
+          speed: Math.random() * 0.008 + 0.002,
+          dir: Math.random() > 0.5 ? 1 : -1,
+        });
+      }
+    }
+    initStars();
+
+    function animateStars() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      stars.forEach(s => {
+        s.alpha += s.speed * s.dir;
+        if (s.alpha >= 1) { s.alpha = 1; s.dir = -1; }
+        if (s.alpha <= 0) { s.alpha = 0; s.dir =  1; }
+
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(200, 220, 255, ${s.alpha})`;
+        ctx.fill();
+      });
+      requestAnimationFrame(animateStars);
+    }
+    animateStars();
+
+    // ── Shooting stars ────────────────────────────────────────────────────────
+    function spawnShootingStar() {
+      const el = document.createElement('div');
+      el.className = 'shooting-star';
+      document.body.appendChild(el);
+
+      const startX = Math.random() * window.innerWidth;
+      const startY = Math.random() * window.innerHeight * 0.4;
+      const angle  = 25 + Math.random() * 20;          // degrees below horizontal
+      const dist   = 250 + Math.random() * 200;
+      const rad    = (angle * Math.PI) / 180;
+      const endX   = startX + dist * Math.cos(rad);
+      const endY   = startY + dist * Math.sin(rad);
+      const dur    = 600 + Math.random() * 500;
+
+      el.style.cssText = `left:${startX}px; top:${startY}px; opacity:0;`;
+
+      el.animate([
+        { transform: 'translate(0,0)',                     opacity: 0 },
+        { transform: 'translate(10px,10px)',               opacity: 1, offset: 0.05 },
+        { transform: `translate(${endX-startX}px,${endY-startY}px)`, opacity: 0 }
+      ], { duration: dur, easing: 'ease-in' }).onfinish = () => el.remove();
+
+      const next = 4000 + Math.random() * 8000;
+      setTimeout(spawnShootingStar, next);
+    }
+    setTimeout(spawnShootingStar, 2000);
+  </script>
+</body>
+</html>
